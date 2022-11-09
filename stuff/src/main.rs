@@ -1,13 +1,16 @@
-use std::vec::Vec;
+use std::{collections::HashMap};
+use tokio;
+use reqwest;
 
-fn main() {
-    let mut list: Vec<i32> = Vec::new();
 
-    for i in 1..11 {
-        list.push(i)
-    }
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::Client::new()
 
-    for elem in list.iter() {
-        println!("{}", elem)
-    }
-}   
+    let resp = reqwest::get("https://sawsha-is.gay/len")
+        .await?
+        .json::<HashMap<String, String>>()
+        .await?;
+    println!("{}", resp.get("origin").unwrap()); // Would return: 76.94.9.59
+    Ok(())
+}
