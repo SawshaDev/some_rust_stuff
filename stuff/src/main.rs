@@ -1,16 +1,24 @@
-use std::{collections::HashMap};
+use reqwest::{Client};
 use tokio;
-use reqwest;
 
+use serde::{Serialize, Deserialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+struct SomeData {
+    len: u32,
+    status: u32
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let client = reqwest::Client::new()
-
-    let resp = reqwest::get("https://sawsha-is.gay/len")
+    let session = Client::new();
+    let resp = session.post("https://sawsha-is.gay/len")
+        .send()
         .await?
-        .json::<HashMap<String, String>>()
+        .json::<SomeData>()
         .await?;
-    println!("{}", resp.get("origin").unwrap()); // Would return: 76.94.9.59
+
+    println!("Amount of images: {}\nStatus: {}", resp.len, resp.status);
+
     Ok(())
 }
